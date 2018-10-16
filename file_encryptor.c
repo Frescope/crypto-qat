@@ -167,7 +167,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         sizeof(CpaBufferList) + (numBuffers * sizeof(CpaFlatBuffer));
     
     struct COMPLETION_STRUCT complete;
-    PRINT_DBG("cpaCyBufferListGetMetaSize\n");
+    //PRINT_DBG("cpaCyBufferListGetMetaSize\n");
 
     status =
         cpaCyBufferListGetMetaSize(cyInstHandle, numBuffers, &bufferMetaSize);
@@ -251,7 +251,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
 
     if (CPA_STATUS_SUCCESS == status)
     {
-        PRINT_DBG("cpaCySymPerformOp\n");
+        //PRINT_DBG("cpaCySymPerformOp\n");
         COMPLETION_INIT(&complete);
         status = cpaCySymPerformOp(
             cyInstHandle,
@@ -274,6 +274,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         }  
     }
     //copy to dst
+    char * dstTemp;
     for(i=0;i<=numBuffers-2;i++){
         dstTemp = dst + (1024*1024*i);
         memcpy(dstTemp,pDstBuffer[i],1024*1024);
