@@ -149,7 +149,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     // performance. Please implement it as efficient as possible. Your can refer
     // to ./cpa_cipher_sample.c.
     int srcReman = srcLen % (1024*1024);
-    int dstReman = dstLen % (1024*1024);
+    //int dstReman = dstLen % (1024*1024);
     Cpa8U *pBufferMeta1 = NULL;
     Cpa8U *pBufferMeta2 = NULL;
     Cpa32U bufferMetaSize = 0;
@@ -161,6 +161,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     Cpa8U *pDstBuffer[1124];
     Cpa32U bufferSize = 1024*1024;
     Cpa32U numBuffers = srcLen / (1024*1024);
+    printf("numbuffer: %d\n",numBuffers);
     if(srcReman!=0)
         numBuffers += 1;
     Cpa32U bufferListMemSize =
