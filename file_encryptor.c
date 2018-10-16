@@ -143,13 +143,155 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
                                  char *src, unsigned int srcLen,
                                  char *dst, unsigned int dstLen)
 {
-    CpaStatus rc = CPA_STATUS_SUCCESS;
+    CpaStatus status = CPA_STATUS_SUCCESS;
 
     // TODO #2: This function performs a cipher operation and is critical to encryption's
     // performance. Please implement it as efficient as possible. Your can refer
     // to ./cpa_cipher_sample.c.
+    int srcReman = srcLen % (1024*1024);
+    int dstReman = dstLen % (1024*1024);
+    Cpa8U *pBufferMeta1 = NULL;
+    Cpa8U *pBufferMeta2 = NULL;
+    Cpa32U bufferMetaSize = 0;
+    CpaBufferList *pBufferList1 = NULL;
+    CpaBufferList *pBufferList2 = NULL;
+    CpaFlatBuffer *pFlatBuffer = NULL;
+    CpaCySymOpData *pOpData = NULL;
+    Cpa8U *pSrcBuffer[1124];
+    Cpa8U *pDstBuffer[1124];
+    Cpa32U bufferSize = 1024*1024;
+    Cpa32U numBuffers = srcLen / (1024*1024);
+    if(srcReman!=0)
+        numBuffers += 1;
+    Cpa32U bufferListMemSize =
+        sizeof(CpaBufferList) + (numBuffers * sizeof(CpaFlatBuffer));
+    
+    struct COMPLETION_STRUCT complete;
+    PRINT_DBG("cpaCyBufferListGetMetaSize\n");
 
-    return rc;
+    status =
+        cpaCyBufferListGetMetaSize(cyInstHandle, numBuffers, &bufferMetaSize);
+    if (CPA_STATUS_SUCCESS == status)
+    {
+        status = PHYS_CONTIG_ALLOC(&pBufferMeta1, bufferMetaSize);
+    }if (CPA_STATUS_SUCCESS == status)
+    {
+        status = PHYS_CONTIG_ALLOC(&pBufferMeta2, bufferMetaSize);
+    }
+    if (CPA_STATUS_SUCCESS == status)
+    {
+        status = OS_MALLOC(&pBufferList1, bufferListMemSize);
+    }
+    if (CPA_STATUS_SUCCESS == status)
+    {
+        status = OS_MALLOC(&pBufferList2, bufferListMemSize);
+    }
+
+    //allocate mem for src
+    int i;
+    for(i=0;i<=numBuffers-2;i++){
+        char * srcTemp = src + (1024*1024*i);
+        if (CPA_STATUS_SUCCESS == status)
+        {
+            status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
+        }
+        memcpy(pSrcBuffer[i], srcTemp, 1024*1024);
+    }
+    if (CPA_STATUS_SUCCESS == status)
+    {
+        status = PHYS_CONTIG_ALLOC
+            (&pSrcBuffer[i], srcLen-(numBuffers-1)*(1024*1024));
+    }
+    memcpy(pSrcBuffer[i], src+(1024*1024*i), srcLen-(1024*1024*i));
+    //allocate mem for dst
+    for(i=0;i<=numBuffers-1;i++){
+        if (CPA_STATUS_SUCCESS == status)
+        {
+            status = PHYS_CONTIG_ALLOC(&pDstBuffer[i], bufferSize);
+        }
+    }
+    //stuff bufferlist1
+     if (CPA_STATUS_SUCCESS == status){
+        pFlatBuffer = (CpaFlatBuffer *)(pBufferList1 + 1);
+        pBufferList1->pBuffers = pFlatBuffer;
+        pBufferList1->numBuffers = 1;
+        pBufferList1->pPrivateMetaData = pBufferMeta1;
+        for(i=0;i<=numBuffers-2;i++){
+            pFlatBuffer->dataLenInBytes = 1024*1024;
+            pFlatBuffer->pData = pSrcBuffer[i];
+            
+            pFlatBuffer += 1;
+        }
+        pFlatBuffer->dataLenInBytes = srcLen - (1024*1024*i);
+        pFlatBuffer->pData = pSrcBuffer[i];
+     }
+     //stuff bufferlist2
+     if (CPA_STATUS_SUCCESS == status){
+        pFlatBuffer = (CpaFlatBuffer *)(pBufferList2 + 1);
+        pBufferList2->pBuffers = pFlatBuffer;
+        pBufferList2->numBuffers = 1;
+        pBufferList2->pPrivateMetaData = pBufferMeta2;
+        for(i=0;i<=numBuffers-2;i++){
+            pFlatBuffer->dataLenInBytes = 1024*1024;
+            pFlatBuffer->pData = pDstBuffer[i];
+            
+            pFlatBuffer += 1;
+        }
+        pFlatBuffer->dataLenInBytes = srcLen - (1024*1024*i);
+        pFlatBuffer->pData = pDstBuffer[i];
+     }
+     status = OS_MALLOC(&pOpData, sizeof(CpaCySymOpData));
+     if (CPA_STATUS_SUCCESS == status)
+    {
+        pOpData->sessionCtx = sessionCtx;
+        pOpData->packetType = CPA_CY_SYM_PACKET_TYPE_FULL;
+        pOpData->cryptoStartSrcOffsetInBytes = 0;
+        pOpData->messageLenToCipherInBytes = srcLen;
+    }
+
+    if (CPA_STATUS_SUCCESS == status)
+    {
+        PRINT_DBG("cpaCySymPerformOp\n");
+        COMPLETION_INIT(&complete);
+        status = cpaCySymPerformOp(
+            cyInstHandle,
+            (void *)&complete, /* data sent as is to the callback function*/
+            pOpData,           /* operational data struct */
+            pBufferList1,       /* source buffer list */
+            pBufferList2,       
+            NULL);
+        if (CPA_STATUS_SUCCESS != status)
+        {
+            PRINT_ERR("cpaCySymPerformOp failed. (status = %d)\n", status);
+        }
+        if (CPA_STATUS_SUCCESS == status)
+        {
+            if (!COMPLETION_WAIT(&complete, TIMEOUT_MS))
+            {
+                PRINT_ERR("timeout or interruption in cpaCySymPerformOp\n");
+                status = CPA_STATUS_FAIL;
+            }
+        }  
+    }
+    //copy to dst
+    for(i=0;i<=numBuffers-2;i++){
+        dstTemp = dst + (1024*1024*i);
+        memcpy(dstTemp,pDstBuffer[i],1024*1024);
+    }
+    dstTemp = dst + (1024*1024*i);
+    memcpy(dstTemp,pDstBuffer[i],dstLen-(1024*1024*i));
+    //free
+    for(i=0;i<numBuffers;i++){
+        PHYS_CONTIG_FREE(pSrcBuffer[i]);
+        PHYS_CONTIG_FREE(pDstBuffer[i]);
+    }
+    PHYS_CONTIG_FREE(pBufferMeta1);
+    PHYS_CONTIG_FREE(pBufferMeta2);
+    OS_FREE(pBufferList1);
+    OS_FREE(pBufferList2);
+
+    COMPLETION_DESTROY(&complete);
+    return status;
 }
 
 // It's thread-safety.
@@ -206,11 +348,13 @@ unlock:
     // Populate the session setup structure for the operation required
     // TODO #1: please fillup the following properties in sessionSetupData
     // for AES-256-ECB encrypt/decrypt operation:
-    //sessionSetupData.sessionPriority =
-    //sessionSetupData.symOperation =
-    //sessionSetupData.cipherSetupData.cipherAlgorithm =
-    //sessionSetupData.cipherSetupData.pCipherKey =
-    //sessionSetupData.cipherSetupData.cipherKeyLenInBytes =
+    sessionSetupData.sessionPriority = CPA_CY_PRIORITY_NORMAL;
+    sessionSetupData.symOperation = CPA_CY_SYM_OP_CIPHER;
+    sessionSetupData.cipherSetupData.cipherAlgorithm =
+        CPA_CY_SYM_CIPHER_AES_ECB;
+    sessionSetupData.cipherSetupData.pCipherKey = sampleCipherKey;
+    sessionSetupData.cipherSetupData.cipherKeyLenInBytes =
+        sizeof(sampleCipherKey);
     sessionSetupData.cipherSetupData.cipherDirection =
         isEnc ? CPA_CY_SYM_CIPHER_DIRECTION_ENCRYPT : CPA_CY_SYM_CIPHER_DIRECTION_DECRYPT;
     RT_PRINT_DBG("@sessionSetupData.cipherSetupData.cipherKeyLenInBytes = %ld\n", sizeof(sampleCipherKey));
