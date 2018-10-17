@@ -243,7 +243,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         pBufferList1->pBuffers = pFlatBuffer;
         pBufferList1->numBuffers = numBuffers;
         pBufferList1->pPrivateMetaData = pBufferMeta1;
-        for(i=0;i<=numBuffers-2;i++){
+        for(i=0;i<=(int)numBuffers-2;i++){
             pFlatBuffer->dataLenInBytes = 1024*1024;
             pFlatBuffer->pData = pSrcBuffer[i];            
             pFlatBuffer += 1;
@@ -251,13 +251,14 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         pFlatBuffer->dataLenInBytes = srcLen - (1024*1024*i);
         pFlatBuffer->pData = pSrcBuffer[i];
      }
+     printf("0:checkpoint\n");
      //stuff bufferlist2
      if (CPA_STATUS_SUCCESS == status){
         pFlatBuffer = (CpaFlatBuffer *)(pBufferList2 + 1);
         pBufferList2->pBuffers = pFlatBuffer;
         pBufferList2->numBuffers = numBuffers;
         pBufferList2->pPrivateMetaData = pBufferMeta2;
-        for(i=0;i<=numBuffers-2;i++){
+        for(i=0;i<=(int)numBuffers-2;i++){
             pFlatBuffer->dataLenInBytes = 1024*1024;
             pFlatBuffer->pData = pDstBuffer[i];
             
