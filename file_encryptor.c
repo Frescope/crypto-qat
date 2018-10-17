@@ -167,13 +167,13 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     printf("%d\n",srcLen-numBuffers*1024*1024);
     printf("%u  upto: %u\n",src,src+srcLen);
     //tempcheck
-    char *tempcheck = NULL;
-    OS_MALLOC(&tempcheck,sizeof(char));
-    memcpy(tempcheck,src+srcLen-1,sizeof(char));
-    printf("%d: %d\n",tempcheck,*tempcheck);
-    memcpy(tempcheck,dst+dstLen-1,sizeof(char));
-    printf("%d: %d\n",tempcheck,*tempcheck);
-    OS_FREE(tempcheck);
+    // char *tempcheck = NULL;
+    // OS_MALLOC(&tempcheck,sizeof(char));
+    // memcpy(tempcheck,src+srcLen-1,sizeof(char));
+    // printf("%d: %d\n",tempcheck,*tempcheck);
+    // memcpy(tempcheck,dst+dstLen-1,sizeof(char));
+    // printf("%d: %d\n",tempcheck,*tempcheck);
+    // OS_FREE(tempcheck);
 
     Cpa32U bufferListMemSize =
         sizeof(CpaBufferList) + (numBuffers * sizeof(CpaFlatBuffer));
