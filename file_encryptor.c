@@ -266,6 +266,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         pFlatBuffer->dataLenInBytes = dstLen - (1024*1024*i);
         pFlatBuffer->pData = pDstBuffer[i];
      }
+     printf("1:checkpoint\n");
      status = OS_MALLOC(&pOpData, sizeof(CpaCySymOpData));
      if (CPA_STATUS_SUCCESS == status)
     {
@@ -274,7 +275,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         pOpData->cryptoStartSrcOffsetInBytes = 0;
         pOpData->messageLenToCipherInBytes = srcLen;
     }
-
+    printf("2:checkpoint\n");
     if (CPA_STATUS_SUCCESS == status)
     {
         //PRINT_DBG("cpaCySymPerformOp\n");
@@ -300,6 +301,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         }  
     }
     //copy to dst
+    printf("3:checkpoint\n");
     char * dstTemp;
     for(i=0;i<=(int)numBuffers-2;i++){
         printf("copy to dst: %d\n");
