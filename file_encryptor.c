@@ -210,8 +210,8 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
-            if (CPA_STATUS_SUCCESS == status)
-                printf("alloc success\n");
+            // if (CPA_STATUS_SUCCESS == status)
+            //     printf("alloc success\n");
         }
         
         memcpy(pSrcBuffer[i], srcTemp, bufferSize);
@@ -229,10 +229,12 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     }
     //else printf("STATUS FAIL!!!\n");
     //allocate mem for dst
-    for(i=0;i<=numBuffers-1;i++){
+    for(i=0;i<=(int)numBuffers-1;i++){
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pDstBuffer[i], bufferSize);
+            if (CPA_STATUS_SUCCESS == status)
+                printf("dst alloc success\n");
         }
     }
     //stuff bufferlist1
@@ -299,7 +301,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     }
     //copy to dst
     char * dstTemp;
-    for(i=0;i<=numBuffers-2;i++){
+    for(i=0;i<=(int)numBuffers-2;i++){
         dstTemp = dst + (1024*1024*i);
         memcpy(dstTemp,pDstBuffer[i],1024*1024);
         printf("%d\t",i);
@@ -307,7 +309,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     dstTemp = dst + (1024*1024*i);
     memcpy(dstTemp,pDstBuffer[i],dstLen-(1024*1024*i));
     //free
-    for(i=0;i<numBuffers;i++){
+    for(i=0;i<(int)numBuffers;i++){
         PHYS_CONTIG_FREE(pSrcBuffer[i]);
         PHYS_CONTIG_FREE(pDstBuffer[i]);
     }
