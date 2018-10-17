@@ -229,15 +229,15 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     }
     //else printf("STATUS FAIL!!!\n");
     //allocate mem for dst
-    for(i=0;i<=(int)numBuffers-1;i++){
-        pDstBuffer[i]=NULL;
-        if (CPA_STATUS_SUCCESS == status)
-        {
-            status = PHYS_CONTIG_ALLOC(&pDstBuffer[i], bufferSize);
-            if (CPA_STATUS_SUCCESS == status)
-                printf("dst alloc success: %d\n",i);
-        }
-    }
+    // for(i=0;i<=(int)numBuffers-1;i++){
+    //     pDstBuffer[i]=NULL;
+    //     if (CPA_STATUS_SUCCESS == status)
+    //     {
+    //         status = PHYS_CONTIG_ALLOC(&pDstBuffer[i], bufferSize);
+    //         if (CPA_STATUS_SUCCESS == status)
+    //             printf("dst alloc success: %d\n",i);
+    //     }
+    // }
     //stuff bufferlist1
      if (CPA_STATUS_SUCCESS == status){
         pFlatBuffer = (CpaFlatBuffer *)(pBufferList1 + 1);
@@ -252,23 +252,23 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         pFlatBuffer->dataLenInBytes = srcLen - (1024*1024*i);
         pFlatBuffer->pData = pSrcBuffer[i];
      }
-     printf("0:checkpoint\n");
+     //printf("0:checkpoint\n");
      //stuff bufferlist2
-     if (CPA_STATUS_SUCCESS == status){
-        pFlatBuffer = (CpaFlatBuffer *)(pBufferList2 + 1);
-        pBufferList2->pBuffers = pFlatBuffer;
-        pBufferList2->numBuffers = numBuffers;
-        pBufferList2->pPrivateMetaData = pBufferMeta2;
-        for(i=0;i<=(int)numBuffers-2;i++){
-            pFlatBuffer->dataLenInBytes = 1024*1024;
-            pFlatBuffer->pData = pDstBuffer[i];
+    //  if (CPA_STATUS_SUCCESS == status){
+    //     pFlatBuffer = (CpaFlatBuffer *)(pBufferList2 + 1);
+    //     pBufferList2->pBuffers = pFlatBuffer;
+    //     pBufferList2->numBuffers = numBuffers;
+    //     pBufferList2->pPrivateMetaData = pBufferMeta2;
+    //     for(i=0;i<=(int)numBuffers-2;i++){
+    //         pFlatBuffer->dataLenInBytes = 1024*1024;
+    //         pFlatBuffer->pData = pDstBuffer[i];
             
-            pFlatBuffer += 1;
-        }
-        pFlatBuffer->dataLenInBytes = dstLen - (1024*1024*i);
-        pFlatBuffer->pData = pDstBuffer[i];
-     }
-     printf("1:checkpoint\n");
+    //         pFlatBuffer += 1;
+    //     }
+    //     pFlatBuffer->dataLenInBytes = dstLen - (1024*1024*i);
+    //     pFlatBuffer->pData = pDstBuffer[i];
+    //  }
+     //printf("1:checkpoint\n");
      status = OS_MALLOC(&pOpData, sizeof(CpaCySymOpData));
      if (CPA_STATUS_SUCCESS == status)
     {
@@ -277,7 +277,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         pOpData->cryptoStartSrcOffsetInBytes = 0;
         pOpData->messageLenToCipherInBytes = srcLen;
     }
-    printf("2:checkpoint\n");
+    //printf("2:checkpoint\n");
     if (CPA_STATUS_SUCCESS == status)
     {
         //PRINT_DBG("cpaCySymPerformOp\n");
@@ -303,7 +303,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         }  
     }
     //copy to dst
-    printf("3:checkpoint\n");
+    //printf("3:checkpoint\n");
     char * dstTemp;
     for(i=0;i<=(int)numBuffers-2;i++){
         //printf("copy to dst: %d\n",i);
@@ -313,10 +313,11 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     }
     dstTemp = dst + (1024*1024*i);
     memcpy(dstTemp,pSrcBuffer[i],dstLen-(1024*1024*i));
+    printf("%d\n",i);
     //free
     for(i=0;i<(int)numBuffers;i++){
         PHYS_CONTIG_FREE(pSrcBuffer[i]);
-        PHYS_CONTIG_FREE(pDstBuffer[i]);
+        //PHYS_CONTIG_FREE(pDstBuffer[i]);
     }
     PHYS_CONTIG_FREE(pBufferMeta1);
     PHYS_CONTIG_FREE(pBufferMeta2);
