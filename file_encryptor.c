@@ -197,6 +197,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
+            printf("Buffer No.%d done\n",i);
         }
         memcpy(pSrcBuffer[i], srcTemp, 1024*1024);
     }
