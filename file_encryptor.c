@@ -194,6 +194,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     char * srcTemp = NULL;
     for(i=0;i<=numBuffers-2;i++){
         srcTemp = src + (1024*1024*i);
+        pSrcBuffer[i] = NULL;
         printf("%u\n",src);
         printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char));
         if (CPA_STATUS_SUCCESS == status)
