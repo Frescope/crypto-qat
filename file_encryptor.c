@@ -206,7 +206,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     for(i=0;i<=(int)numBuffers-2;i++){ //numBuffers-2 is unsigned int?
         srcTemp = src + (1024*1024*i);
         pSrcBuffer[i] = NULL;
-        printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char));
+        //printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char));
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
@@ -215,7 +215,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         }
         
         memcpy(pSrcBuffer[i], srcTemp, bufferSize);
-        printf("Buffer No.%d done\n",i);
+        //printf("Buffer No.%d done\n",i);
     }
     if (CPA_STATUS_SUCCESS == status)
     {   
@@ -234,7 +234,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         {
             status = PHYS_CONTIG_ALLOC(&pDstBuffer[i], bufferSize);
             if (CPA_STATUS_SUCCESS == status)
-                printf("dst alloc success\n");
+                printf("dst alloc success: %d\n",i);
         }
     }
     //stuff bufferlist1
