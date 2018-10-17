@@ -309,11 +309,11 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         //printf("copy to dst: %d\n",i);
         dstTemp = dst + (1024*1024*i);
         memcpy(dstTemp,pSrcBuffer[i],1024*1024); //!
-        printf("%d\t",i);
+        //printf("%d\t",i);
     }
     dstTemp = dst + (1024*1024*i);
     memcpy(dstTemp,pSrcBuffer[i],dstLen-(1024*1024*i));
-    printf("%d\n",i);
+    printf("Tail: copy from Buffer No.%d done\n",i);
     //free
     for(i=0;i<(int)numBuffers;i++){
         PHYS_CONTIG_FREE(pSrcBuffer[i]);
