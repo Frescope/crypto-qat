@@ -202,15 +202,16 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     //allocate mem for src
     int i;
     char * srcTemp = NULL;
-    for(i=0;i<=numBuffers-2;i++){
+    printf("%d  %u\n",numBuffers-2,numBuffers-2);
+    for(i=0;i<=(int)numBuffers-2;i++){
         srcTemp = src + (1024*1024*i);
         pSrcBuffer[i] = NULL;
         printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char));
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
-            if (CPA_STATUS_SUCCESS == status)
-                printf("alloc success\n");
+            // if (CPA_STATUS_SUCCESS == status)
+            //     printf("alloc success\n");
         }
         
         memcpy(pSrcBuffer[i], srcTemp, bufferSize);
