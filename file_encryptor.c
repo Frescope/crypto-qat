@@ -195,13 +195,13 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     for(i=0;i<=numBuffers-2;i++){
         srcTemp = src + (1024*1024*i);
         pSrcBuffer[i] = NULL;
-        printf("%u\n",src);
+        printf("%u  upto: %u\n",src,src+srcLen);
         printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char));
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
         }
-        memcpy(pSrcBuffer[i], srcTemp, 1024*1024);
+        memcpy(pSrcBuffer[i], srcTemp, bufferSize);
         printf("Buffer No.%d done\n",i);
     }
     if (CPA_STATUS_SUCCESS == status)
