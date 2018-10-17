@@ -161,7 +161,8 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     Cpa8U *pDstBuffer[1124];
     Cpa32U bufferSize = 1024*1024;
     Cpa32U numBuffers = srcLen / (1024*1024);
-    printf("numbuffer: %d\n",numBuffers);
+    printf("numbuffer: %d\t",numBuffers);
+    printf("%d\n",srcLen-numBuffers*1024*1024);
     if(srcReman!=0)
         numBuffers += 1;
     Cpa32U bufferListMemSize =
