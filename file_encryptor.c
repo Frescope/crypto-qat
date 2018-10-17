@@ -161,10 +161,10 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     Cpa8U *pDstBuffer[1124];
     Cpa32U bufferSize = 1024*1024;
     Cpa32U numBuffers = srcLen / (1024*1024);
-    printf("numbuffer: %d\t",numBuffers);
-    printf("%d\n",srcLen-numBuffers*1024*1024);
     if(srcReman!=0)
         numBuffers += 1;
+    printf("numbuffer: %d\t",numBuffers);
+    printf("%d\n",srcLen-numBuffers*1024*1024);
     Cpa32U bufferListMemSize =
         sizeof(CpaBufferList) + (numBuffers * sizeof(CpaFlatBuffer));
     
@@ -206,6 +206,8 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     {
         status = PHYS_CONTIG_ALLOC
             (&pSrcBuffer[i], srcLen-(numBuffers-1)*(1024*1024));
+        if(CPA_STATUS_SUCCESS == status) 
+            printf("Buffer No.%d done\n",i);
     }
     memcpy(pSrcBuffer[i], src+(1024*1024*i), srcLen-(1024*1024*i));
     //allocate mem for dst
