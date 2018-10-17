@@ -296,7 +296,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     for(i=0;i<=numBuffers-2;i++){
         dstTemp = dst + (1024*1024*i);
         memcpy(dstTemp,pDstBuffer[i],1024*1024);
-        print("%d",i);
+        printf("%d",i);
     }
     dstTemp = dst + (1024*1024*i);
     memcpy(dstTemp,pDstBuffer[i],dstLen-(1024*1024*i));
