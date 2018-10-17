@@ -202,16 +202,16 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     //allocate mem for src
     int i;
     char * srcTemp = NULL;
-    printf("%d  %u\n",numBuffers-2,numBuffers-2);
-    for(i=0;i<=numBuffers-2;i++){
+    //printf("%d  %u\n",numBuffers-2,numBuffers-2);
+    for(i=0;i<=(int)numBuffers-2;i++){ //numBuffers-2 is unsigned int?
         srcTemp = src + (1024*1024*i);
         pSrcBuffer[i] = NULL;
         printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char));
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pSrcBuffer[i], bufferSize);
-            // if (CPA_STATUS_SUCCESS == status)
-            //     printf("alloc success\n");
+            if (CPA_STATUS_SUCCESS == status)
+                printf("alloc success\n");
         }
         
         memcpy(pSrcBuffer[i], srcTemp, bufferSize);
@@ -225,9 +225,9 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         status = PHYS_CONTIG_ALLOC
             (&pSrcBuffer[i], bufferSize);//srcLen-(numBuffers-1)*(1024*1024));
         memcpy(pSrcBuffer[i], src+(1024*1024*i), srcLen-(1024*1024*i)); 
-        printf("Buffer No.%d done\n",i);
+        printf("Tail: Buffer No.%d done\n",i);
     }
-    else printf("STATUS FAIL!!!\n");
+    //else printf("STATUS FAIL!!!\n");
     //allocate mem for dst
     for(i=0;i<=numBuffers-1;i++){
         if (CPA_STATUS_SUCCESS == status)
