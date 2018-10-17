@@ -165,7 +165,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         numBuffers += 1;
     printf("\n\n\nnumbuffer: %d\t",numBuffers);
     printf("%d\n",srcLen-numBuffers*1024*1024);
-    printf("Tempcheck: %c\n",*(src+srcLen-1));
+    printf("Tempcheck: %d\n",*(src+srcLen-1));
     Cpa32U bufferListMemSize =
         sizeof(CpaBufferList) + (numBuffers * sizeof(CpaFlatBuffer));
     
