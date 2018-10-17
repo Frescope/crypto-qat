@@ -302,6 +302,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     //copy to dst
     char * dstTemp;
     for(i=0;i<=(int)numBuffers-2;i++){
+        printf("copy to dst: %d\n");
         dstTemp = dst + (1024*1024*i);
         memcpy(dstTemp,pDstBuffer[i],1024*1024);
         printf("%d\t",i);
