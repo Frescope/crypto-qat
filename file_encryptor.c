@@ -287,7 +287,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
             (void *)&complete, /* data sent as is to the callback function*/
             pOpData,           /* operational data struct */
             pBufferList1,       /* source buffer list */
-            pBufferList2,       
+            pBufferList1,     //!    
             NULL);
         if (CPA_STATUS_SUCCESS != status)
         {
@@ -308,11 +308,11 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     for(i=0;i<=(int)numBuffers-2;i++){
         //printf("copy to dst: %d\n",i);
         dstTemp = dst + (1024*1024*i);
-        memcpy(dstTemp,pDstBuffer[i],1024*1024);
+        memcpy(dstTemp,pSrcBuffer[i],1024*1024); //!
         printf("%d\t",i);
     }
     dstTemp = dst + (1024*1024*i);
-    memcpy(dstTemp,pDstBuffer[i],dstLen-(1024*1024*i));
+    memcpy(dstTemp,pSrcBuffer[i],dstLen-(1024*1024*i));
     //free
     for(i=0;i<(int)numBuffers;i++){
         PHYS_CONTIG_FREE(pSrcBuffer[i]);
