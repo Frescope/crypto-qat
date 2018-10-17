@@ -213,7 +213,6 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     }
     if (CPA_STATUS_SUCCESS == status)
     {   
-        printf("%d\n",i);
         srcTemp = src + (1024*1024*i);
         pSrcBuffer[i] = NULL;
         printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char)); 
@@ -297,6 +296,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     for(i=0;i<=numBuffers-2;i++){
         dstTemp = dst + (1024*1024*i);
         memcpy(dstTemp,pDstBuffer[i],1024*1024);
+        print("%d",i);
     }
     dstTemp = dst + (1024*1024*i);
     memcpy(dstTemp,pDstBuffer[i],dstLen-(1024*1024*i));
