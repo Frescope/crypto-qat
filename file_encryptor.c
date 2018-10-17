@@ -212,13 +212,14 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
         printf("Buffer No.%d done\n",i);
     }
     if (CPA_STATUS_SUCCESS == status)
-    {
+    {   srcTemp = src + (1024*1024*i);
+        pSrcBuffer[i] = NULL;
+        printf("%d Temp: %u  size: %d\n",i,srcTemp, (srcTemp-src)/sizeof(char)); 
         status = PHYS_CONTIG_ALLOC
             (&pSrcBuffer[i], bufferSize);//srcLen-(numBuffers-1)*(1024*1024));
-        if(CPA_STATUS_SUCCESS == status) 
-            printf("Buffer No.%d done\n",i);
+        memcpy(pSrcBuffer[i], src+(1024*1024*i), srcLen-(1024*1024*i)); 
+        printf("Buffer No.%d done\n",i);
     }
-    memcpy(pSrcBuffer[i], src+(1024*1024*i), srcLen-(1024*1024*i));
     //allocate mem for dst
     for(i=0;i<=numBuffers-1;i++){
         if (CPA_STATUS_SUCCESS == status)
