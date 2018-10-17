@@ -230,6 +230,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     //else printf("STATUS FAIL!!!\n");
     //allocate mem for dst
     for(i=0;i<=(int)numBuffers-1;i++){
+        pDstBuffer[i]=NULL;
         if (CPA_STATUS_SUCCESS == status)
         {
             status = PHYS_CONTIG_ALLOC(&pDstBuffer[i], bufferSize);
