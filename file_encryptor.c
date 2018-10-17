@@ -166,7 +166,7 @@ static CpaStatus cipherPerformOp(CpaInstanceHandle cyInstHandle,
     printf("\n\n\nnumbuffer: %d\t",numBuffers);
     printf("%d\n",srcLen-numBuffers*1024*1024);
     char *tempcheck = NULL;
-    OS_MALLoc(&tempcheck,sizeof(char));
+    OS_MALLOC(&tempcheck,sizeof(char));
     memcpy(tempcheck,src+srcLen-1,sizeof(char));
     printf("%d: %d\n",tempcheck,*tempcheck);
     OS_FREE(tempcheck);
